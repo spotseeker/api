@@ -83,10 +83,12 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.mfa",
     "allauth.socialaccount",
+    "django_filters",
+    "rest_framework",
 ]
 
 LOCAL_APPS = [
-    "spotseeker.users",
+    "spotseeker.user",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -189,7 +191,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "spotseeker.users.context_processors.allauth_settings",
+                "spotseeker.user.context_processors.allauth_settings",
             ],
         },
     },
@@ -272,13 +274,24 @@ ACCOUNT_EMAIL_REQUIRED = True
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_ADAPTER = "spotseeker.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "spotseeker.user.adapters.AccountAdapter"
 # https://docs.allauth.org/en/latest/account/forms.html
-ACCOUNT_FORMS = {"signup": "spotseeker.users.forms.UserSignupForm"}
+ACCOUNT_FORMS = {"signup": "spotseeker.user.forms.UserSignupForm"}
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
-SOCIALACCOUNT_ADAPTER = "spotseeker.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "spotseeker.user.adapters.SocialAccountAdapter"
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
-SOCIALACCOUNT_FORMS = {"signup": "spotseeker.users.forms.UserSocialSignupForm"}
+SOCIALACCOUNT_FORMS = {"signup": "spotseeker.user.forms.UserSocialSignupForm"}
+
+
+# rest_framework
+# ------------------------------------------------------------------------------
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
+    ],
+}
 
 
 # Your stuff...

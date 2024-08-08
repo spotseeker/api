@@ -11,9 +11,6 @@ urlpatterns = [
     # User management
     path("user/", include("spotseeker.user.urls", namespace="user")),
     path("accounts/", include("allauth.urls")),
-    # Your stuff: custom urls includes go here
-    # ...
-    # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
 

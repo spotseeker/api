@@ -6,17 +6,17 @@ from spotseeker.user.models import User
 
 def test_user_detail(user: User):
     assert (
-        reverse("api:user-detail", kwargs={"username": user.username})
-        == f"/api/users/{user.username}/"
+        reverse("user:user-detail", kwargs={"username": user.username})
+        == f"/user/{user.username}/"
     )
-    assert resolve(f"/api/users/{user.username}/").view_name == "api:user-detail"
+    assert resolve(f"/user/{user.username}/").view_name == "user:user-detail"
 
 
 def test_user_list():
-    assert reverse("api:user-list") == "/api/users/"
-    assert resolve("/api/users/").view_name == "api:user-list"
+    assert reverse("user:user-list") == "/user/"
+    assert resolve("/user/").view_name == "user:user-list"
 
 
 def test_user_me():
-    assert reverse("api:user-me") == "/api/users/me/"
-    assert resolve("/api/users/me/").view_name == "api:user-me"
+    assert reverse("user:user-me") == "/user/me/"
+    assert resolve("/user/me/").view_name == "user:user-me"

@@ -2,11 +2,11 @@ from django.conf import settings
 from rest_framework.routers import DefaultRouter
 from rest_framework.routers import SimpleRouter
 
-from spotseeker.user.api.views import UserViewSet
+from spotseeker.user.views import UserViewSet
 
 router = DefaultRouter() if settings.DEBUG else SimpleRouter()
 
-router.register("users", UserViewSet)
+router.register("user", UserViewSet)
 
 
 app_name = "api"

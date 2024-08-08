@@ -277,3 +277,6 @@ spotseeker/media/
 .env
 .envs/*
 !.envs/.local/
+
+# Ruff
+.ruff_chache/

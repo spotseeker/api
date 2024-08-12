@@ -85,6 +85,11 @@ jobs:
           export ALLOWED_HOSTS=localhost
           export GITHUB_WORKFLOW=True
           export MODE=workflow
+          export POSTGRES_DB=db
+          export POSTGRES_USER=postgres
+          export POSTGRES_PASSWORD=password
+          export POSTGRES_HOST=postgres
+          export POSTGRES_PORT=5432
           python manage.py makemigrations
           python manage.py migrate
           python manage.py migrate --run-syncdb

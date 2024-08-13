@@ -1,5 +1,6 @@
 # ruff: noqa: E501
 from .base import *  # noqa: F403
+from .base import BASE_DIR
 from .base import DATABASES
 from .base import INSTALLED_APPS
 from .base import env
@@ -49,6 +50,7 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
 # STORAGES
 # ------------------------------------------------------------------------------
 # https://django-storages.readthedocs.io/en/latest/#installation
+INSTALLED_APPS += ["storages"]
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
 AWS_ACCESS_KEY_ID = env("DJANGO_AWS_ACCESS_KEY_ID")
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
@@ -75,6 +77,15 @@ AWS_S3_CUSTOM_DOMAIN = env("DJANGO_AWS_S3_CUSTOM_DOMAIN", default=None)
 aws_s3_domain = AWS_S3_CUSTOM_DOMAIN or f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
 # STATIC & MEDIA
 # ------------------------
+STATIC_ROOT = str(BASE_DIR / "staticfiles")
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 MEDIA_URL = f"https://{aws_s3_domain}/media/"
 COLLECTFASTA_STRATEGY = "collectfasta.strategies.boto3.Boto3Strategy"
 STATIC_URL = f"https://{aws_s3_domain}/static/"

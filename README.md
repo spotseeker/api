@@ -1,34 +1,45 @@
-# spotseeker
-
-mobile application designed for travelers to share their experiences through images
-
+# SpotSeeker
+[![CI](https://github.com/spotseeker/api/actions/workflows/ci.yml/badge.svg)](https://github.com/spotseeker/api/actions/workflows/ci.yml)
 [![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
-License: MIT
+SpotSeeker is a mobile application designed for travelers to share their experiences through images, discover new places, share their location and recommendations with other travelers around the world.
 
-## Settings
+## Requirements
+- Python 3.11
+- Virtualenv 20.21
+- PostgreSQL
 
-Moved to [settings](http://cookiecutter-django.readthedocs.io/en/latest/settings.html).
+## Steps
 
-## Basic Commands
+Create Python virtual environment:
+```bash
+virtualenv venv -p python3.11
+```
 
-### Setting Up Your Users
+Activate the virtual environment
+```bash
+source venv/bin/activate
+```
 
-- To create a **normal user account**, just go to Sign Up and fill out the form. Once you submit it, you'll see a "Verify Your E-mail Address" page. Go to your console to see a simulated email verification message. Copy the link into your browser. Now the user's email should be verified and ready to go.
+Install the dependencies:
+```bash
+pip install -r requirements/local.txt
+```
 
-- To create a **superuser account**, use this command:
+Install pre-commit hooks:
+```bash
+pre-commit install
+```
 
-      $ python manage.py createsuperuser
+Run the project:
+```bash
+python manage.py runserver
+```
 
-For convenience, you can keep your normal user logged in on Chrome and your superuser logged in on Firefox (or similar), so that you can see how the site behaves for both kinds of users.
+## Running tests with pytest
 
-### Type checks
-
-Running type checks with mypy:
-
-    $ mypy spotseeker
-
+    $ pytest
 ### Test coverage
 
 To run the tests, check your test coverage, and generate an HTML coverage report:
@@ -37,14 +48,8 @@ To run the tests, check your test coverage, and generate an HTML coverage report
     $ coverage html
     $ open htmlcov/index.html
 
-#### Running tests with pytest
+### Type checks
 
-    $ pytest
+Running type checks with mypy:
 
-### Live reloading and Sass CSS compilation
-
-Moved to [Live reloading and SASS compilation](https://cookiecutter-django.readthedocs.io/en/latest/developing-locally.html#sass-compilation-live-reloading).
-
-## Deployment
-
-The following details how to deploy this application.
+    $ mypy spotseeker

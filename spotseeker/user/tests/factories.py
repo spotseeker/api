@@ -5,7 +5,7 @@ from factory import Faker
 from factory import post_generation
 from factory.django import DjangoModelFactory
 
-from spotseeker.users.models import User
+from spotseeker.user.models import User
 
 
 class UserFactory(DjangoModelFactory):

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from spotseeker.users.models import User
+from spotseeker.user.models import User
 
 
 class UserSerializer(serializers.ModelSerializer[User]):

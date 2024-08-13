@@ -4,7 +4,7 @@ import django.utils.timezone
 from django.db import migrations
 from django.db import models
 
-import spotseeker.users.models
+import spotseeker.user.models
 
 
 class Migration(migrations.Migration):

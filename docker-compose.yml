@@ -1,0 +1,42 @@
+version: "3.4"
+services:
+   app:
+     build: .
+     command: python manage.py runserver 0.0.0.0:8000
+     restart: unless-stopped
+     depends_on:
+       - db
+     volumes:
+       - .:/app
+     env_file:
+       - .env
+     ports:
+       - '8000:8000'
+
+   db:
+     image: postgres:13
+     restart: unless-stopped
+     env_file:
+       - .env
+     volumes:
+       - postgres:/var/lib/postgresql/data
+     ports:
+       - '5433:5432'
+
+   pgadmin:
+    image: dpage/pgadmin4
+    env_file:
+       - .env
+    volumes:
+       - pgadmin:/root/.pgadmin
+    ports:
+      - '8080:80'
+
+volumes:
+  postgres:
+  pgadmin:
+
+networks:
+  default:
+    external:
+      name: spotseeker-net

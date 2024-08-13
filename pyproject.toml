@@ -15,7 +15,7 @@ plugins = ["django_coverage_plugin"]
 
 # ==== mypy ====
 [tool.mypy]
-python_version = "3.12"
+python_version = "3.11"
 check_untyped_defs = true
 ignore_missing_imports = true
 warn_unused_ignores = true
@@ -82,7 +82,7 @@ exclude = [
 # Same as Django: https://github.com/cookiecutter/cookiecutter-django/issues/4792.
 line-length = 88
 indent-width = 4
-target-version = "py312"
+target-version = "py311"
 
 [tool.ruff.lint]
 select = [
@@ -143,17 +143,19 @@ select = [
 ]
 ignore = [
   "S101", # Use of assert detected https://docs.astral.sh/ruff/rules/assert/
+  "COM812",
+  "ISC001",
   "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
   "SIM102", # sometimes it's better to nest
-  "UP038" # Checks for uses of isinstance/issubclass that take a tuple 
+  "UP038" # Checks for uses of isinstance/issubclass that take a tuple
           # of types for comparison.
-          # Deactivated because it can make the code slow: 
+          # Deactivated because it can make the code slow:
           # https://github.com/astral-sh/ruff/issues/7871
 ]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
 unfixable = []
-# The fixes in extend-unsafe-fixes will require 
+# The fixes in extend-unsafe-fixes will require
 # provide the `--unsafe-fixes` flag when fixing.
 extend-unsafe-fixes = [
     "UP038"

@@ -6,7 +6,7 @@ from rest_framework.mixins import UpdateModelMixin
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
-from spotseeker.users.models import User
+from spotseeker.user.models import User
 
 from .serializers import UserSerializer
 

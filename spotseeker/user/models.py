@@ -1,26 +1,47 @@
 from django.contrib.auth.models import AbstractUser
-from django.db.models import CharField
-from django.urls import reverse
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from config.models import BaseModel
+from config.models import BaseTimestampedModel
 
-class User(AbstractUser):
+
+class User(AbstractUser, BaseModel, BaseTimestampedModel):
     """
     Default custom user model for spotseeker.
-    If adding fields that need to be filled at user signup,
-    check forms.SignupForm and forms.SocialSignupForms accordingly.
     """
 
-    # First and last name do not cover name patterns around the globe
-    name = CharField(_("Name of User"), blank=True, max_length=255)
-    first_name = None  # type: ignore[assignment]
-    last_name = None  # type: ignore[assignment]
+    is_active = None
+    email = models.EmailField(_("email address"), unique=True)
+    birth_date = models.DateField(_("birth date"))
+    description = models.TextField(_("profile bio"), blank=True)
+    avatar = models.URLField(_("URL of the profile picture"), blank=True)
+    is_validated = models.BooleanField(_("if the email is validated"), default=False)
 
-    def get_absolute_url(self) -> str:
-        """Get URL for user's detail view.
 
-        Returns:
-            str: URL for user detail.
+class UserOTP(models.Model):
+    otp = models.CharField(_("code for validations"), max_length=6)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text="Register created timestamp",
+    )
 
-        """
-        return reverse("users:detail", kwargs={"username": self.username})
+    def __str__(self):
+        return self.otp
+
+
+class Follow(models.Model):
+    following_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="following"
+    )
+    followed_user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="followed"
+    )
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        help_text="Register created timestamp",
+    )
+
+    def __str__(self):
+        return f"{self.following_user.username} follows {self.followed_user.username}"

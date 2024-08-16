@@ -26,7 +26,6 @@ class UserAdmin(auth_admin.UserAdmin):
             _("Permissions"),
             {
                 "fields": (
-                    "is_active",
                     "is_staff",
                     "is_superuser",
                     "groups",

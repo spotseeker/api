@@ -11,7 +11,9 @@ from spotseeker.user.models import User
 class UserFactory(DjangoModelFactory):
     username = Faker("user_name")
     email = Faker("email")
-    name = Faker("name")
+    first_name = Faker("first_name")
+    last_name = Faker("last_name")
+    birth_date = "2000-01-01"
 
     @post_generation
     def password(self, create: bool, extracted: Sequence[Any], **kwargs):  # noqa: FBT001

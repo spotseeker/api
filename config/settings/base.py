@@ -90,6 +90,7 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "django_filters",
     "rest_framework",
+    "rest_framework.authtoken",
 ]
 
 LOCAL_APPS = [

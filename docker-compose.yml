@@ -1,4 +1,3 @@
-version: "3.4"
 services:
    app:
      build: .
@@ -38,5 +37,5 @@ volumes:
 
 networks:
   default:
-    external:
-      name: spotseeker-net
+    name: spotseeker-net
+    external: true

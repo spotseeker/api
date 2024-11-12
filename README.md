@@ -37,6 +37,9 @@ Run the project:
 python manage.py runserver
 ```
 
+## Run with Docker
+    $ docker compose up
+
 ## Running tests with pytest
 
     $ pytest

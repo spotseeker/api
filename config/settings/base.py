@@ -90,6 +90,7 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "django_filters",
     "rest_framework",
+    "drf_spectacular",
 ]
 
 LOCAL_APPS = [
@@ -294,8 +295,16 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 
-# Your stuff...
+# Spectacular
 # ------------------------------------------------------------------------------
+SPECTACULAR_SETTINGS = {
+    "TITLE": "SpotSeeker API",
+    "DESCRIPTION": "Mobile application designed for travelers to share their experiences through images",
+    "VERSION": "0.0.1",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
+}

@@ -1,13 +1,13 @@
-from django.conf import settings
+from django.urls import path
 from rest_framework.routers import DefaultRouter
-from rest_framework.routers import SimpleRouter
 
+from spotseeker.user.views import NotificationView
 from spotseeker.user.views import UserViewSet
 
-router = DefaultRouter() if settings.DEBUG else SimpleRouter()
+router = DefaultRouter()
 
 router.register("", UserViewSet)
 
 app_name = "user"
 
-urlpatterns = [*router.urls]
+urlpatterns = [*router.urls, path("notification/", NotificationView.as_view())]

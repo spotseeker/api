@@ -11,7 +11,7 @@ class Post(BaseModel, BaseTimestampedModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     location_id = models.TextField(_("google maps location id"))
     score = models.IntegerField(_("score of the location"), null=True, blank=True)
-    is_achived = models.BooleanField(_("if the post is not public"), default=False)
+    is_archived = models.BooleanField(_("if the post is not public"), default=False)
 
     def __str__(self):
         return self.id

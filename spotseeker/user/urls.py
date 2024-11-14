@@ -10,4 +10,7 @@ router.register("", UserViewSet)
 
 app_name = "user"
 
-urlpatterns = [*router.urls, path("notification/", NotificationView.as_view())]
+urlpatterns = [
+    *router.urls,
+    path("notification/", NotificationView.as_view({"get": "list"})),
+]

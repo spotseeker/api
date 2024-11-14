@@ -4,7 +4,6 @@ from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
-from rest_framework.generics import GenericAPIView
 from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
@@ -46,7 +45,7 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class NotificationView(GenericAPIView, ListModelMixin):
+class NotificationView(GenericViewSet, ListModelMixin):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = NotificationSerializer

@@ -45,3 +45,16 @@ class Follow(models.Model):
 
     def __str__(self):
         return f"{self.following_user.username} follows {self.followed_user.username}"
+
+
+class Notification(BaseTimestampedModel):
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="notifications"
+    )
+    user_interaction = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="user_interaction"
+    )
+    content = models.TextField(_("Content of the notification"))
+
+    def __str__(self):
+        return self.message

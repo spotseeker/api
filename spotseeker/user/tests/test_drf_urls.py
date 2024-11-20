@@ -15,8 +15,3 @@ def test_user_detail(user: User):
 def test_user_list():
     assert reverse("user:user-list") == "/user/"
     assert resolve("/user/").view_name == "user:user-list"
-
-
-def test_user_me():
-    assert reverse("user:user-me") == "/user/me/"
-    assert resolve("/user/me/").view_name == "user:user-me"

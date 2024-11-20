@@ -1,6 +1,7 @@
 # ruff: noqa: ERA001, E501
 """Base settings to build other settings files upon."""
 
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -90,7 +91,9 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "django_filters",
     "rest_framework",
-    "rest_framework.authtoken",
+    "drf_spectacular",
+    "corsheaders",
+    "rest_framework_simplejwt",
 ]
 
 LOCAL_APPS = [
@@ -137,6 +140,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -295,8 +299,25 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
     ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 
-# Your stuff...
+# Spectacular
 # ------------------------------------------------------------------------------
+SPECTACULAR_SETTINGS = {
+    "TITLE": "SpotSeeker API",
+    "DESCRIPTION": "Mobile application designed for travelers to share their experiences through images",
+    "VERSION": "0.1.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    # OTHER SETTINGS
+}
+
+# Simple JWT
+# ------------------------------------------------------------------------------
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(weeks=4),
+}

@@ -1,18 +1,28 @@
+from http import HTTPMethod
+
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
+from spotseeker.user.models import Notification
 from spotseeker.user.models import User
 
+from .serializers import NotificationSerializer
+from .serializers import UserOTPSerializer
+from .serializers import UserPasswordUpdateSerializer
 from .serializers import UserSerializer
 
 
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
     queryset = User.objects.all()
     lookup_field = "username"
@@ -20,25 +30,26 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
     def get_queryset(self, *args, **kwargs):
         return self.queryset.filter(id=self.request.user.id)
 
-    @action(detail=False)
-    def me(self, request):
-        serializer = UserSerializer(request.user, context={"request": request})
-        return Response(status=status.HTTP_200_OK, data=serializer.data)
+    @extend_schema(request=UserOTPSerializer)
+    @action(detail=False, methods=[HTTPMethod.POST])
+    def otp(self, request):
+        serializer = UserOTPSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-    # endpoint para register del user (revision arreglar lo del auth OTP y token)
-    @action(detail=False, methods=["POST"])
-    def register(self, request):
-        serializer = self.serializer_class(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()  # Guarda el usuario y obtén la instancia
-            token = Token.objects.create(user=user)  # Crea el token para el usuario
+    @extend_schema(request=UserPasswordUpdateSerializer)
+    @action(detail=True, methods=[HTTPMethod.PATCH])
+    def password(self, request):
+        serializer = UserPasswordUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-            return Response(
-                {
-                    "message": "Usuario registrado exitosamente",
-                    "token": token.key,  # Devuelve el token en la respuesta
-                },
-                status=status.HTTP_201_CREATED,
-            )
 
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class NotificationView(GenericViewSet, ListModelMixin):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+    serializer_class = NotificationSerializer
+    queryset = Notification.objects.all()
+
+    def get_queryset(self, *args, **kwargs):
+        return self.queryset.filter(user=self.request.user)

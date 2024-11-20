@@ -1,6 +1,8 @@
 from rest_framework import serializers
 
+from spotseeker.user.models import Notification
 from spotseeker.user.models import User
+from spotseeker.user.models import UserOTP
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -17,19 +19,26 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
         extra_kwargs = {
-            "url": {"view_name": "api:user-detail", "lookup_field": "username"},
             "password": {"write_only": True},
         }
 
 
-def create(self, validated_data):
-    user = User(
-        username=validated_data["username"],
-        email=validated_data["email"],
-        first_name=validated_data["first_name"],
-        last_name=validated_data["last_name"],
-        birth_date=validated_data["birth_date"],
-    )
-    user.set_password(validated_data["password"])  # Encriptar la contraseña
-    user.save()
-    return user
+class UserOTPSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserOTP
+        fields = ["otp"]
+
+
+class UserPasswordUpdateSerializer(serializers.ModelSerializer):
+    new_password = serializers.CharField()
+    confirm_password = serializers.CharField()
+
+    class Meta:
+        model = User
+        fields = ["password", "new_password", "confirm_password"]
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ["user", "user_interaction", "content"]

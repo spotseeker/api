@@ -26,7 +26,7 @@ class PostImage(BaseTimestampedModel):
         return f"Image {self.order} of post {self.post}"
 
 
-class PostComment(BaseTimestampedModel):
+class PostComment(BaseModel, BaseTimestampedModel):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.TextField(_("comment in the post"))

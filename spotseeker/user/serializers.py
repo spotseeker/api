@@ -6,12 +6,34 @@ from spotseeker.user.models import UserOTP
 
 
 class UserSerializer(serializers.ModelSerializer):
+    followers = serializers.IntegerField(source="followers.count()", read_only=True)
+    following = serializers.IntegerField(source="following.count()", read_only=True)
+
     class Meta:
         model = User
-        fields = ["username", "email", "url"]
+        fields = [
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "birth_date",
+            "password",
+            "description",
+            "avatar",
+            "is_validated",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+            "followers",
+            "following",
+        ]
 
         extra_kwargs = {
-            "url": {"view_name": "api:user-detail", "lookup_field": "username"},
+            "password": {"write_only": True},
+            "created_at": {"read_only": True},
+            "updated_at": {"read_only": True},
+            "deleted_at": {"read_only": True},
+            "is_validated": {"read_only": True},
         }
 
 

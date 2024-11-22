@@ -2,7 +2,6 @@ from http import HTTPMethod
 
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.mixins import DestroyModelMixin
@@ -12,6 +11,7 @@ from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from spotseeker.post.models import Post
 from spotseeker.post.models import PostBookmark
@@ -31,7 +31,7 @@ class PostAPIView(
     UpdateModelMixin,
     GenericViewSet,
 ):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
     queryset = Post.objects.all()
@@ -86,7 +86,7 @@ class PostCommentAPIView(
     UpdateModelMixin,
     GenericViewSet,
 ):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PostCommentSerializer
     queryset = PostComment.objects.all()

@@ -11,7 +11,6 @@ class User(AbstractUser, BaseModel, BaseTimestampedModel):
     Default custom user model for spotseeker.
     """
 
-    is_active = None
     email = models.EmailField(_("email address"), unique=True)
     birth_date = models.DateField(_("birth date"))
     description = models.TextField(_("profile bio"), blank=True)
@@ -32,11 +31,11 @@ class UserOTP(models.Model):
 
 
 class Follow(models.Model):
-    following_user = models.ForeignKey(
+    follower_user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="following"
     )
     followed_user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="followed"
+        User, on_delete=models.CASCADE, related_name="followers"
     )
     created_at = models.DateTimeField(
         auto_now_add=True,
@@ -44,7 +43,7 @@ class Follow(models.Model):
     )
 
     def __str__(self):
-        return f"{self.following_user.username} follows {self.followed_user.username}"
+        return f"{self.follower_user.username} follows {self.followed_user.username}"
 
 
 class Notification(BaseTimestampedModel):

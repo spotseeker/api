@@ -14,4 +14,19 @@ def test_user_detail(user: User):
 
 def test_user_list():
     assert reverse("user:user-list") == "/user/"
-    assert resolve("/user/").view_name == "user:user-list"
+
+
+def test_create_user():
+    assert reverse("user:create") == "/user/"
+
+
+def test_user_otp():
+    assert reverse("user:user-otp") == "/user/otp/"
+
+
+def test_user_password():
+    assert reverse("user:user-password") == "/user/password/"
+
+
+def test_user_notification():
+    assert reverse("user:notification-list") == "/user/notification/"

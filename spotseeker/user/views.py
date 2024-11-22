@@ -1,15 +1,17 @@
 from http import HTTPMethod
 
+from django.contrib.auth.hashers import make_password
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
-from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
+from rest_framework.generics import CreateAPIView
 from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from spotseeker.user.models import Notification
 from spotseeker.user.models import User
@@ -20,8 +22,18 @@ from .serializers import UserPasswordUpdateSerializer
 from .serializers import UserSerializer
 
 
+class UserCreateView(CreateAPIView):
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+
+    def perform_create(self, serializer):
+        password = serializer.validated_data.pop("password")
+        password = make_password(password)
+        serializer.save(password=password)
+
+
 class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericViewSet):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
     queryset = User.objects.all()
@@ -38,7 +50,7 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(request=UserPasswordUpdateSerializer)
-    @action(detail=True, methods=[HTTPMethod.PATCH])
+    @action(detail=False, methods=[HTTPMethod.PATCH])
     def password(self, request):
         serializer = UserPasswordUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -46,7 +58,7 @@ class UserViewSet(RetrieveModelMixin, ListModelMixin, UpdateModelMixin, GenericV
 
 
 class NotificationView(GenericViewSet, ListModelMixin):
-    authentication_classes = [TokenAuthentication]
+    authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = NotificationSerializer
     queryset = Notification.objects.all()

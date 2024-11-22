@@ -2,6 +2,7 @@ from django.urls import path
 from rest_framework.routers import DefaultRouter
 
 from spotseeker.user.views import NotificationView
+from spotseeker.user.views import UserCreateView
 from spotseeker.user.views import UserViewSet
 
 router = DefaultRouter()
@@ -12,5 +13,6 @@ app_name = "user"
 
 urlpatterns = [
     *router.urls,
+    path("", UserCreateView.as_view(), name="create"),
     path("notification/", NotificationView.as_view({"get": "list"})),
 ]

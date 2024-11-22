@@ -311,7 +311,7 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS = {
     "TITLE": "SpotSeeker API",
     "DESCRIPTION": "Mobile application designed for travelers to share their experiences through images",
-    "VERSION": "0.1.0",
+    "VERSION": "0.1.1",
     "SERVE_INCLUDE_SCHEMA": False,
     # OTHER SETTINGS
 }

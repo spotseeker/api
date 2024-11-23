@@ -311,7 +311,7 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS = {
     "TITLE": "SpotSeeker API",
     "DESCRIPTION": "Mobile application designed for travelers to share their experiences through images",
-    "VERSION": "0.1.1",
+    "VERSION": "0.1.2",
     "SERVE_INCLUDE_SCHEMA": False,
     # OTHER SETTINGS
 }
@@ -320,5 +320,9 @@ SPECTACULAR_SETTINGS = {
 # ------------------------------------------------------------------------------
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(weeks=4),
-    "USER_AUTHENTICATION_RULE": "config.authentication.authentication_rule",
 }
+
+# Resend
+# ------------------------------------------------------------------------------
+RESEND_APIKEY = env.str("RESEND_APIKEY", "")
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", "")

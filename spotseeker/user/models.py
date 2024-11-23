@@ -4,6 +4,7 @@ from django.utils.translation import gettext_lazy as _
 
 from config.models import BaseModel
 from config.models import BaseTimestampedModel
+from spotseeker.utils.otp import generate_otp
 
 
 class User(AbstractUser, BaseModel, BaseTimestampedModel):
@@ -19,7 +20,9 @@ class User(AbstractUser, BaseModel, BaseTimestampedModel):
 
 
 class UserOTP(models.Model):
-    otp = models.CharField(_("code for validations"), max_length=6)
+    otp = models.CharField(
+        _("code for validations"), max_length=6, default=generate_otp
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(
         auto_now_add=True,

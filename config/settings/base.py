@@ -324,5 +324,5 @@ SIMPLE_JWT = {
 
 # Resend
 # ------------------------------------------------------------------------------
-RESEND_APIKEY = env.str("RESEND_APIKEY")
-EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")
+RESEND_APIKEY = env.str("RESEND_APIKEY", "")
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", "")

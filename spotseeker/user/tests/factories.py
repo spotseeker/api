@@ -6,6 +6,7 @@ from factory import post_generation
 from factory.django import DjangoModelFactory
 
 from spotseeker.user.models import User
+from spotseeker.user.models import UserOTP
 
 
 class UserFactory(DjangoModelFactory):
@@ -41,3 +42,8 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
         django_get_or_create = ["username"]
+
+
+class UserOTPFactory(DjangoModelFactory):
+    class Meta:
+        model = UserOTP

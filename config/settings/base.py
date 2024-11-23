@@ -320,5 +320,9 @@ SPECTACULAR_SETTINGS = {
 # ------------------------------------------------------------------------------
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(weeks=4),
-    "USER_AUTHENTICATION_RULE": "config.authentication.authentication_rule",
 }
+
+# Resend
+# ------------------------------------------------------------------------------
+RESEND_APIKEY = env.str("RESEND_APIKEY")
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER")

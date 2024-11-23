@@ -5,6 +5,7 @@ redis==5.0.7  # https://github.com/redis/redis-py
 hiredis==2.3.2  # https://github.com/redis/hiredis-py
 markdown==3.6  # https://github.com/Python-Markdown/markdown
 whitenoise==6.7.0  # https://github.com/evansd/whitenoise
+resend==2.4.0  # https://github.com/resend/resend-python
 
 # Django
 # ------------------------------------------------------------------------------

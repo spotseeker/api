@@ -10,6 +10,9 @@ mypy==1.10.0  # https://github.com/python/mypy
 django-stubs[compatible-mypy]==5.0.2  # https://github.com/typeddjango/django-stubs
 pytest==8.2.2  # https://github.com/pytest-dev/pytest
 pytest-sugar==1.0.0  # https://github.com/Frozenball/pytest-sugar
+pytest-mock==3.14.0  # https://github.com/pytest-dev/pytest-mock/
+pre-commit==3.7.1  # https://github.com/pre-commit/pre-commit
+genbadge[coverage]==1.1.1  # https://github.com/smarie/python-genbadge
 
 # Documentation
 # ------------------------------------------------------------------------------
@@ -21,8 +24,6 @@ sphinx-autobuild==2024.4.16 # https://github.com/GaretJax/sphinx-autobuild
 ruff==0.5.2  # https://github.com/astral-sh/ruff
 coverage==7.6.0  # https://github.com/nedbat/coveragepy
 djlint==1.34.1  # https://github.com/Riverside-Healthcare/djLint
-pre-commit==3.7.1  # https://github.com/pre-commit/pre-commit
-genbadge[coverage]==1.1.1  # https://github.com/smarie/python-genbadge
 
 # Django
 # ------------------------------------------------------------------------------

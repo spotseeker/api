@@ -14,13 +14,16 @@ class Post(BaseModel, BaseTimestampedModel):
     is_archived = models.BooleanField(_("if the post is not public"), default=False)
 
     def __str__(self):
-        return self.id
+        return str(self.id)
 
 
 class PostImage(BaseTimestampedModel):
     post = models.ForeignKey(Post, on_delete=models.CASCADE)
     media = models.URLField(_("URL of the image"))
     order = models.IntegerField(_("number of the position"))
+
+    class Meta:
+        unique_together = ["post", "order"]
 
     def __str__(self):
         return f"Image {self.order} of post {self.post}"

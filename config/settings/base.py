@@ -43,6 +43,7 @@ USE_I18N = True
 USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = [str(BASE_DIR / "locale")]
+MAX_IMAGES_PER_POST = env.int("MAX_IMAGES_PER_POST", 3)
 
 # DATABASES
 # ------------------------------------------------------------------------------
@@ -303,6 +304,8 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 20,
 }
 
 
@@ -311,7 +314,7 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS = {
     "TITLE": "SpotSeeker API",
     "DESCRIPTION": "Mobile application designed for travelers to share their experiences through images",
-    "VERSION": "0.1.2",
+    "VERSION": "0.1.3",
     "SERVE_INCLUDE_SCHEMA": False,
     # OTHER SETTINGS
 }

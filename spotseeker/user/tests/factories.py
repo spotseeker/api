@@ -2,9 +2,11 @@ from collections.abc import Sequence
 from typing import Any
 
 from factory import Faker
+from factory import SubFactory
 from factory import post_generation
 from factory.django import DjangoModelFactory
 
+from spotseeker.user.models import Follow
 from spotseeker.user.models import User
 from spotseeker.user.models import UserOTP
 
@@ -45,5 +47,15 @@ class UserFactory(DjangoModelFactory):
 
 
 class UserOTPFactory(DjangoModelFactory):
+    user = SubFactory(UserFactory)
+
     class Meta:
         model = UserOTP
+
+
+class FollowFactory(DjangoModelFactory):
+    follower_user = SubFactory(UserFactory)
+    followed_user = SubFactory(UserFactory)
+
+    class Meta:
+        model = Follow

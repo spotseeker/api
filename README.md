@@ -1,8 +1,10 @@
 # SpotSeeker
 [![CI](https://github.com/spotseeker/api/actions/workflows/ci.yml/badge.svg)](https://github.com/spotseeker/api/actions/workflows/ci.yml)
-[![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
-[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 ![coverage](coverage-badge.svg)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Built with Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
+
+
 
 SpotSeeker is a mobile application designed for travelers to share their experiences through images, discover new places, share their location and recommendations with other travelers around the world.
 
@@ -39,7 +41,16 @@ python manage.py runserver
 ```
 
 ## Run with Docker
-    $ docker compose up
+You need to install [Docker desktop](https://www.docker.com/) in order to get all the packages to run docker container with compose.
+Then you need to create the network for the application with:
+
+    $ docker network create spotseeker-net
+
+With the network created you must have to create a .env file follow the example `.env.evample`
+
+Finally run the container:
+
+    $ docker compose up --build
 
 ## Running tests with pytest
 

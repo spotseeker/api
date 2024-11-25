@@ -1,5 +1,9 @@
 from http import HTTPMethod
 
+from django.db.models import Count
+from django.db.models import OuterRef
+from django.db.models import Prefetch
+from django.db.models import Subquery
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import action
@@ -16,6 +20,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from spotseeker.post.models import Post
 from spotseeker.post.models import PostBookmark
 from spotseeker.post.models import PostComment
+from spotseeker.post.models import PostImage
 from spotseeker.post.models import PostLike
 
 from .serializers import PostCommentSerializer
@@ -37,8 +42,36 @@ class PostAPIView(
     queryset = Post.objects.all()
     lookup_field = "id"
 
-    def get_queryset(self, *args, **kwargs):
-        return self.queryset.filter(user=self.request.user)
+    def list(self, request, *args, **kwargs):
+        following = request.user.following.values_list("followed_user_id", flat=True)
+        queryset = (
+            self.queryset.filter(
+                deleted_at=None, is_archived=False, user_id__in=following
+            )
+            .annotate(
+                likes=Subquery(
+                    PostLike.objects.filter(post_id=OuterRef("id"))
+                    .values("id")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                ),
+                comments=Subquery(
+                    PostComment.objects.filter(post_id=OuterRef("id"))
+                    .values("id")
+                    .annotate(count=Count("id"))
+                    .values("count")
+                ),
+            )
+            .prefetch_related(
+                Prefetch(
+                    "postimage_set", queryset=PostImage.objects.all(), to_attr="images"
+                )
+            )
+        )
+
+        page = self.paginate_queryset(queryset)
+        serializer = self.get_serializer(page, many=True)
+        return self.get_paginated_response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         serializer = PostSerializer(data=request.data)

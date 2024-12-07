@@ -3,6 +3,7 @@ from factory import SubFactory
 from factory.django import DjangoModelFactory
 
 from spotseeker.post.models import Post
+from spotseeker.post.models import PostBookmark
 from spotseeker.post.models import PostImage
 
 
@@ -22,3 +23,11 @@ class PostImageFactory(DjangoModelFactory):
 
     class Meta:
         model = PostImage
+
+
+class PostBookmarkFactory(DjangoModelFactory):
+    post = SubFactory(PostFactory)
+    user = SubFactory("spotseeker.user.tests.factories.UserFactory")
+
+    class Meta:
+        model = PostBookmark

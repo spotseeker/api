@@ -4,6 +4,7 @@ from django.db.models import Count
 from django.db.models import OuterRef
 from django.db.models import Prefetch
 from django.db.models import Subquery
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -18,15 +19,14 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from spotseeker.post.filters import PostFilter
 from spotseeker.post.models import Post
 from spotseeker.post.models import PostBookmark
 from spotseeker.post.models import PostComment
 from spotseeker.post.models import PostImage
 from spotseeker.post.models import PostLike
-
-from .serializers import PostCommentSerializer
-from .serializers import PostSerializer
-from .serializers import PostUpdateSerializer
+from spotseeker.post.serializers import PostSerializer
+from spotseeker.post.serializers import PostUpdateSerializer
 
 
 class PostAPIView(
@@ -40,36 +40,47 @@ class PostAPIView(
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
-    queryset = Post.objects.all()
+    filterset_class = PostFilter
     lookup_field = "id"
-
-    def list(self, request, *args, **kwargs):
-        following = request.user.following.values_list("followed_user_id", flat=True)
-        queryset = (
-            self.queryset.filter(
-                deleted_at=None, is_archived=False, user_id__in=following
-            )
-            .annotate(
-                likes=Subquery(
-                    PostLike.objects.filter(post_id=OuterRef("id"))
-                    .values("id")
-                    .annotate(count=Count("id"))
-                    .values("count")
-                ),
-                comments=Subquery(
-                    PostComment.objects.filter(post_id=OuterRef("id"))
-                    .values("id")
-                    .annotate(count=Count("id"))
-                    .values("count")
-                ),
-            )
-            .prefetch_related(
-                Prefetch(
-                    "postimage_set", queryset=PostImage.objects.all(), to_attr="images"
-                )
+    queryset = (
+        Post.objects.filter(
+            deleted_at=None,
+        )
+        .annotate(
+            likes=Subquery(
+                PostLike.objects.filter(post_id=OuterRef("id"))
+                .values("id")
+                .annotate(count=Count("id"))
+                .values("count")
+            ),
+            comments=Subquery(
+                PostComment.objects.filter(post_id=OuterRef("id"))
+                .values("id")
+                .annotate(count=Count("id"))
+                .values("count")
+            ),
+        )
+        .prefetch_related(
+            Prefetch(
+                "postimage_set", queryset=PostImage.objects.all(), to_attr="images"
             )
         )
+    )
 
+    def get_object(self):
+        return get_object_or_404(
+            Post.objects.filter(deleted_at=None),
+            id=self.kwargs["id"],
+        )
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        filters = ["user", "is_archived", "is_bookmarked"]
+        if not any(key in request.query_params for key in filters):
+            following = request.user.following.values_list(
+                "followed_user_id", flat=True
+            )
+            queryset = queryset.filter(user_id__in=following, is_archived=False)
         page = self.paginate_queryset(queryset)
         serializer = self.get_serializer(page, many=True)
         return self.get_paginated_response(serializer.data)
@@ -83,7 +94,9 @@ class PostAPIView(
     @extend_schema(request=PostUpdateSerializer, responses={200: PostUpdateSerializer})
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = PostUpdateSerializer(instance, data=request.data)
+        if instance.user != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+        serializer = PostUpdateSerializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(status=status.HTTP_200_OK, data=serializer.data)
@@ -91,6 +104,8 @@ class PostAPIView(
     @extend_schema(request=None, responses={204: None})
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        if instance.user != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         instance.deleted_at = timezone.now()
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -113,44 +128,4 @@ class PostAPIView(
         )
         if not created:
             bookmark.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class PostCommentAPIView(
-    CreateModelMixin,
-    DestroyModelMixin,
-    ListModelMixin,
-    RetrieveModelMixin,
-    UpdateModelMixin,
-    GenericViewSet,
-):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = PostCommentSerializer
-    queryset = PostComment.objects.all()
-    lookup_field = "post_id"
-
-    def list(self, request, post_id):
-        queryset = self.queryset.filter(post_id=post_id)
-        serializer = PostCommentSerializer(queryset, many=True)
-        return Response(status=status.HTTP_200_OK, data=serializer.data)
-
-    def create(self, request, post_id):
-        serializer = PostCommentSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
-        return Response(status=status.HTTP_201_CREATED, data=serializer.data)
-
-    def update(self, request, post_id, pk):
-        instance = self.get_object()
-        serializer = PostCommentSerializer(instance, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=status.HTTP_200_OK, data=serializer.data)
-
-    @extend_schema(request=None, responses={204: None})
-    def destroy(self, request, post_id, pk):
-        instance = self.get_object()
-        instance.deleted_at = timezone.now()
-        instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

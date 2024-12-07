@@ -23,10 +23,8 @@ from spotseeker.post.models import PostBookmark
 from spotseeker.post.models import PostComment
 from spotseeker.post.models import PostImage
 from spotseeker.post.models import PostLike
-
-from .serializers import PostCommentSerializer
-from .serializers import PostSerializer
-from .serializers import PostUpdateSerializer
+from spotseeker.post.serializers import PostSerializer
+from spotseeker.post.serializers import PostUpdateSerializer
 
 
 class PostAPIView(
@@ -113,44 +111,4 @@ class PostAPIView(
         )
         if not created:
             bookmark.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-class PostCommentAPIView(
-    CreateModelMixin,
-    DestroyModelMixin,
-    ListModelMixin,
-    RetrieveModelMixin,
-    UpdateModelMixin,
-    GenericViewSet,
-):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
-    serializer_class = PostCommentSerializer
-    queryset = PostComment.objects.all()
-    lookup_field = "post_id"
-
-    def list(self, request, post_id):
-        queryset = self.queryset.filter(post_id=post_id)
-        serializer = PostCommentSerializer(queryset, many=True)
-        return Response(status=status.HTTP_200_OK, data=serializer.data)
-
-    def create(self, request, post_id):
-        serializer = PostCommentSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
-        return Response(status=status.HTTP_201_CREATED, data=serializer.data)
-
-    def update(self, request, post_id, pk):
-        instance = self.get_object()
-        serializer = PostCommentSerializer(instance, data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=status.HTTP_200_OK, data=serializer.data)
-
-    @extend_schema(request=None, responses={204: None})
-    def destroy(self, request, post_id, pk):
-        instance = self.get_object()
-        instance.deleted_at = timezone.now()
-        instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

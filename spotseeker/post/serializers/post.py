@@ -3,7 +3,6 @@ from rest_framework import serializers
 
 from config.errors import ErrorMessages
 from spotseeker.post.models import Post
-from spotseeker.post.models import PostComment
 from spotseeker.post.models import PostImage
 
 
@@ -50,10 +49,3 @@ class PostUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Post
         fields = ["body", "is_archived", "score"]
-
-
-class PostCommentSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PostComment
-        fields = ["user", "comment"]
-        read_only_fields = ["user"]

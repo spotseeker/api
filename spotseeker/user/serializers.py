@@ -45,14 +45,23 @@ class UserOTPSerializer(serializers.ModelSerializer):
 
 class UserPasswordUpdateSerializer(serializers.ModelSerializer):
     new_password = serializers.CharField()
-    confirm_password = serializers.CharField()
 
     class Meta:
         model = User
-        fields = ["password", "new_password", "confirm_password"]
+        fields = ["password", "new_password"]
+
+
+class RecoverPasswordSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["password"]
 
 
 class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = ["user", "user_interaction", "content"]
+
+
+class EmailSerializer(serializers.Serializer):
+    email = serializers.EmailField()

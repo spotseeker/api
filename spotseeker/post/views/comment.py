@@ -11,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from spotseeker.post.models import Post
 from spotseeker.post.models import PostComment
 from spotseeker.post.serializers import PostCommentSerializer
 
@@ -35,9 +36,13 @@ class PostCommentAPIView(
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
     def create(self, request, post_id):
+        try:
+            post = Post.objects.get(id=post_id)
+        except Post.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
         serializer = PostCommentSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(user=request.user)
+        serializer.save(user=request.user, post=post)
         return Response(status=status.HTTP_201_CREATED, data=serializer.data)
 
     def update(self, request, post_id, pk):

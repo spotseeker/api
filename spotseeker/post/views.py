@@ -5,6 +5,7 @@ from django.db.models import OuterRef
 from django.db.models import Prefetch
 from django.db.models import Subquery
 from django.utils import timezone
+from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin
@@ -79,6 +80,7 @@ class PostAPIView(
         serializer.save(user=request.user)
         return Response(status=status.HTTP_201_CREATED, data=serializer.data)
 
+    @extend_schema(request=PostUpdateSerializer, responses={200: PostUpdateSerializer})
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = PostUpdateSerializer(instance, data=request.data)
@@ -86,12 +88,14 @@ class PostAPIView(
         serializer.save()
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
+    @extend_schema(request=None, responses={204: None})
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.deleted_at = timezone.now()
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(request=None, responses={204: None})
     @action(detail=True, methods=[HTTPMethod.POST])
     def like(self, request, *args, **kwargs):
         post = self.get_object()
@@ -100,6 +104,7 @@ class PostAPIView(
             like.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @extend_schema(request=None, responses={204: None})
     @action(detail=True, methods=[HTTPMethod.POST])
     def bookmark(self, request, *args, **kwargs):
         post = self.get_object()
@@ -143,6 +148,7 @@ class PostCommentAPIView(
         serializer.save()
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
+    @extend_schema(request=None, responses={204: None})
     def destroy(self, request, post_id, pk):
         instance = self.get_object()
         instance.deleted_at = timezone.now()

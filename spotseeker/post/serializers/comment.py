@@ -6,5 +6,5 @@ from spotseeker.post.models import PostComment
 class PostCommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostComment
-        fields = ["user", "comment"]
-        read_only_fields = ["user"]
+        fields = ["id", "user", "comment"]
+        read_only_fields = ["id", "user"]

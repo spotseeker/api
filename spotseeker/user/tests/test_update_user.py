@@ -1,6 +1,7 @@
 import pytest
 from rest_framework import status
 
+from config.errors import ErrorMessages
 from spotseeker.user.tests.factories import UserFactory
 
 
@@ -59,4 +60,4 @@ def test_update_password_wrong_password(api_client):
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
     assert "password" in response.data
-    assert response.data["password"] == ["Invalid password"]
+    assert response.data["password"][0] == ErrorMessages.INVALID_PASSWORD

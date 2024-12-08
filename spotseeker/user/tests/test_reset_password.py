@@ -7,7 +7,8 @@ from rest_framework import status
 def test_send_otp(api_client, mocker):
     user = baker.make("user.User")
     mocker.patch(
-        "spotseeker.user.views.EmailHelper.send_password_reset_otp", return_value=None
+        "spotseeker.user.views.password.EmailHelper.send_password_reset_otp",
+        return_value=None,
     )
     response = api_client.post(
         "/user/password/recover/",
@@ -22,7 +23,8 @@ def test_send_otp(api_client, mocker):
 def test_send_otp_invalid_email(api_client, mocker):
     user = baker.make("user.User")
     mocker.patch(
-        "spotseeker.user.views.EmailHelper.send_password_reset_otp", return_value=None
+        "spotseeker.user.views.password.EmailHelper.send_password_reset_otp",
+        return_value=None,
     )
     response = api_client.post(
         "/user/password/recover/",
@@ -36,7 +38,8 @@ def test_send_otp_invalid_email(api_client, mocker):
 def test_send_otp_twice(api_client, mocker):
     user = baker.make("user.User")
     mocker.patch(
-        "spotseeker.user.views.EmailHelper.send_password_reset_otp", return_value=None
+        "spotseeker.user.views.password.EmailHelper.send_password_reset_otp",
+        return_value=None,
     )
     response = api_client.post(
         "/user/password/recover/",

@@ -1,9 +1,7 @@
 from http import HTTPMethod
 
 from django.db.models import Count
-from django.db.models import OuterRef
 from django.db.models import Prefetch
-from django.db.models import Subquery
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
@@ -22,7 +20,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from spotseeker.post.filters import PostFilter
 from spotseeker.post.models import Post
 from spotseeker.post.models import PostBookmark
-from spotseeker.post.models import PostComment
 from spotseeker.post.models import PostImage
 from spotseeker.post.models import PostLike
 from spotseeker.post.serializers import PostSerializer
@@ -47,18 +44,8 @@ class PostAPIView(
             deleted_at=None,
         )
         .annotate(
-            likes=Subquery(
-                PostLike.objects.filter(post_id=OuterRef("id"))
-                .values("id")
-                .annotate(count=Count("id"))
-                .values("count")
-            ),
-            comments=Subquery(
-                PostComment.objects.filter(post_id=OuterRef("id"))
-                .values("id")
-                .annotate(count=Count("id"))
-                .values("count")
-            ),
+            likes=Count("postlike", distinct=True),
+            comments=Count("postcomment", distinct=True),
         )
         .prefetch_related(
             Prefetch(

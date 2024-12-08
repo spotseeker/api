@@ -1,7 +1,7 @@
-from .comment import PostCommentAPIView
-from .post import PostAPIView
+from .comment import PostCommentView
+from .post import PostViewSet
 
 __all__ = [
-    "PostCommentAPIView",
-    "PostAPIView",
+    "PostCommentView",
+    "PostViewSet",
 ]

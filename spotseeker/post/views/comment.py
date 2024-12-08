@@ -1,10 +1,10 @@
+from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.mixins import DestroyModelMixin
 from rest_framework.mixins import ListModelMixin
-from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -16,19 +16,24 @@ from spotseeker.post.models import PostComment
 from spotseeker.post.serializers import PostCommentSerializer
 
 
-class PostCommentAPIView(
+class PostCommentView(
     CreateModelMixin,
     DestroyModelMixin,
     ListModelMixin,
-    RetrieveModelMixin,
     UpdateModelMixin,
     GenericViewSet,
 ):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PostCommentSerializer
-    queryset = PostComment.objects.all()
-    lookup_field = "post_id"
+    queryset = PostComment.objects.filter(deleted_at=None)
+
+    def get_object(self):
+        return get_object_or_404(
+            PostComment.objects.get(
+                id=self.kwargs["pk"], post_id=self.kwargs["post_id"]
+            )
+        )
 
     def list(self, request, post_id):
         queryset = self.queryset.filter(post_id=post_id)
@@ -47,6 +52,8 @@ class PostCommentAPIView(
 
     def update(self, request, post_id, pk):
         instance = self.get_object()
+        if instance.user != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = PostCommentSerializer(instance, data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -55,6 +62,8 @@ class PostCommentAPIView(
     @extend_schema(request=None, responses={204: None})
     def destroy(self, request, post_id, pk):
         instance = self.get_object()
+        if instance.user != request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         instance.deleted_at = timezone.now()
         instance.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

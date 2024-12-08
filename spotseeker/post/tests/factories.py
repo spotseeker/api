@@ -4,7 +4,9 @@ from factory.django import DjangoModelFactory
 
 from spotseeker.post.models import Post
 from spotseeker.post.models import PostBookmark
+from spotseeker.post.models import PostComment
 from spotseeker.post.models import PostImage
+from spotseeker.user.tests.factories import UserFactory
 
 
 class PostFactory(DjangoModelFactory):
@@ -31,3 +33,12 @@ class PostBookmarkFactory(DjangoModelFactory):
 
     class Meta:
         model = PostBookmark
+
+
+class PostCommentFactory(DjangoModelFactory):
+    post = SubFactory(PostFactory)
+    user = SubFactory(UserFactory)
+    comment = Faker("text")
+
+    class Meta:
+        model = PostComment

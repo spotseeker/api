@@ -30,14 +30,18 @@ class PostCommentView(
 
     def get_object(self):
         return get_object_or_404(
-            PostComment.objects.get(
-                id=self.kwargs["pk"], post_id=self.kwargs["post_id"]
-            )
+            PostComment.objects.all(),
+            id=self.kwargs["pk"],
+            post_id=self.kwargs["post_id"],
         )
 
     def list(self, request, post_id):
         queryset = self.queryset.filter(post_id=post_id)
-        serializer = PostCommentSerializer(queryset, many=True)
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = self.get_serializer(queryset, many=True)
         return Response(status=status.HTTP_200_OK, data=serializer.data)
 
     def create(self, request, post_id):

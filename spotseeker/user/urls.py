@@ -6,6 +6,8 @@ from spotseeker.user.views import RecoverPasswordOTPView
 from spotseeker.user.views import RecoverPasswordView
 from spotseeker.user.views import UserCreateView
 from spotseeker.user.views import UserViewSet
+from spotseeker.user.views.user import UserFollowersView
+from spotseeker.user.views.user import UserFollowingView
 
 router = DefaultRouter()
 
@@ -16,6 +18,8 @@ app_name = "user"
 urlpatterns = [
     path("", UserCreateView.as_view(), name="create"),
     *router.urls,
+    path("<str:username>/followers/", UserFollowersView.as_view(), name="followers"),
+    path("<str:username>/following/", UserFollowingView.as_view(), name="followers"),
     path(
         "notification/",
         NotificationView.as_view({"get": "list"}),

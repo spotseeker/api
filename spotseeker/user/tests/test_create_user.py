@@ -8,7 +8,8 @@ from spotseeker.user.tests.factories import UserFactory
 def test_create_user(api_client, mocker):
     user = UserFactory.build()
     mocker.patch(
-        "spotseeker.user.views.EmailHelper.send_onboarding_otp", return_value=None
+        "spotseeker.user.views.create.EmailHelper.send_onboarding_otp",
+        return_value=None,
     )
     response = api_client.post(
         "/user/",
@@ -31,7 +32,8 @@ def test_fail_username_exists(api_client, mocker):
     user = UserFactory()
     new_user = UserFactory.build(username=user.username)
     mocker.patch(
-        "spotseeker.user.views.EmailHelper.send_onboarding_otp", return_value=None
+        "spotseeker.user.views.create.EmailHelper.send_onboarding_otp",
+        return_value=None,
     )
     response = api_client.post(
         "/user/",
@@ -53,7 +55,8 @@ def test_fail_email_exists(api_client, mocker):
     user = UserFactory()
     new_user = UserFactory.build(email=user.email)
     mocker.patch(
-        "spotseeker.user.views.EmailHelper.send_onboarding_otp", return_value=None
+        "spotseeker.user.views.create.EmailHelper.send_onboarding_otp",
+        return_value=None,
     )
     response = api_client.post(
         "/user/",

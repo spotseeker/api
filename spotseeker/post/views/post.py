@@ -26,7 +26,7 @@ from spotseeker.post.serializers import PostSerializer
 from spotseeker.post.serializers import PostUpdateSerializer
 
 
-class PostAPIView(
+class PostViewSet(
     CreateModelMixin,
     DestroyModelMixin,
     ListModelMixin,

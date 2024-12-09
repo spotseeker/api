@@ -117,7 +117,7 @@ class UserFollowersView(GenericAPIView, ListModelMixin):
             id__in=Follow.objects.filter(followed_user=user).values_list(
                 "follower_user_id", flat=True
             )
-        )
+        ).order_by("username")
         page = self.paginate_queryset(followers)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -141,7 +141,7 @@ class UserFollowingView(GenericAPIView, ListModelMixin):
             id__in=Follow.objects.filter(follower_user=user).values_list(
                 "followed_user_id", flat=True
             )
-        )
+        ).order_by("username")
         page = self.paginate_queryset(following)
         if page is not None:
             serializer = self.get_serializer(page, many=True)

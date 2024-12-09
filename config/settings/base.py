@@ -280,6 +280,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
+    "SEARCH_PARAM": "q",
 }
 
 
@@ -288,7 +289,7 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS = {
     "TITLE": "SpotSeeker API",
     "DESCRIPTION": "Mobile application designed for travelers to share their experiences through images",
-    "VERSION": "0.1.7",
+    "VERSION": "0.1.8",
     "SERVE_INCLUDE_SCHEMA": False,
     # OTHER SETTINGS
 }

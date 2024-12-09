@@ -135,3 +135,43 @@ def test_list_posts_other_user(api_client, user):
     assert response.data["count"] == 1
     assert len(response.data["results"]) == 1
     assert response.data["results"][0]["body"] == post.body
+
+
+@pytest.mark.django_db()
+def test_list_posts_search(api_client, user):
+    api_client.force_authenticate(user=user)
+    post = PostFactory(user=user)
+    first_word = post.body.split()[0]
+    response = api_client.get("/post/", {"q": first_word})
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["count"] == 1
+    assert len(response.data["results"]) == 1
+    assert response.data["results"][0]["id"] == str(post.id)
+
+
+@pytest.mark.django_db()
+def test_list_posts_search_no_results(api_client, user):
+    api_client.force_authenticate(user=user)
+    PostFactory(user=user, body="this is a test post")
+    response = api_client.get("/post/", {"q": "thisisnotinthepost"})
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["count"] == 0
+    assert len(response.data["results"]) == 0
+
+
+@pytest.mark.django_db()
+def test_list_posts_by_username(api_client, post):
+    api_client.force_authenticate(user=post.user)
+    response = api_client.get("/post/", {"q": post.user.username})
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["count"] == 1
+    assert len(response.data["results"]) == 1
+
+
+@pytest.mark.django_db()
+def test_list_posts_by_names(api_client, post):
+    api_client.force_authenticate(user=post.user)
+    response = api_client.get("/post/", {"q": post.user.first_name})
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["count"] == 1
+    assert len(response.data["results"]) == 1

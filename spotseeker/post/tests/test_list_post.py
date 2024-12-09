@@ -20,6 +20,7 @@ def test_list_posts(api_client, user):
     assert response.status_code == status.HTTP_200_OK
     assert response.data["count"] == 1
     assert response.data["results"][0]["body"] == post.body
+    assert response.data["results"][0]["user"]["username"] == user.username
     assert len(response.data["results"][0]["images"]) == len(post_images)
 
 
@@ -76,6 +77,7 @@ def test_list_posts_archived(api_client, user):
     assert response.data["count"] == 1
     assert len(response.data["results"]) == 1
     assert response.data["results"][0]["body"] == post.body
+    assert response.data["results"][0]["user"]["username"] == user.username
 
 
 @pytest.mark.django_db()

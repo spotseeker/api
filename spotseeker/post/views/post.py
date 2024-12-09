@@ -4,7 +4,9 @@ from django.db.models import Count
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import extend_schema
+from rest_framework import filters
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.mixins import CreateModelMixin
@@ -37,7 +39,9 @@ class PostViewSet(
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_class = PostFilter
+    search_fields = ["body", "user__username", "user__first_name", "user__last_name"]
     lookup_field = "id"
     queryset = (
         Post.objects.filter(
@@ -53,6 +57,7 @@ class PostViewSet(
                 "postimage_set", queryset=PostImage.objects.all(), to_attr="images"
             )
         )
+        .order_by("-created_at")
     )
 
     def get_object(self):
@@ -63,7 +68,7 @@ class PostViewSet(
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        filters = ["user", "is_archived", "is_bookmarked"]
+        filters = ["user", "is_archived", "is_bookmarked", "q"]
         if not any(key in request.query_params for key in filters):
             following = request.user.following.values_list(
                 "followed_user_id", flat=True

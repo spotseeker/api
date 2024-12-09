@@ -25,6 +25,7 @@ def test_create_user(api_client, mocker):
     data = response.data
     assert response.status_code == status.HTTP_201_CREATED
     assert data["username"] == user.username
+    assert data["id"] is not None
 
 
 @pytest.mark.django_db()

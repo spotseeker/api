@@ -4,6 +4,7 @@ from rest_framework import serializers
 from config.errors import ErrorMessages
 from spotseeker.post.models import Post
 from spotseeker.post.models import PostImage
+from spotseeker.user.serializers.user import UserSerializer
 
 
 class PostImageSerializer(serializers.ModelSerializer):
@@ -16,6 +17,7 @@ class PostSerializer(serializers.ModelSerializer):
     likes = serializers.IntegerField(read_only=True)
     comments = serializers.IntegerField(read_only=True)
     images = PostImageSerializer(many=True)
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = Post

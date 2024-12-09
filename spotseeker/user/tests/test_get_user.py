@@ -12,6 +12,7 @@ def test_get_own_user(api_client, user):
     api_client.force_authenticate(user=user)
     response = api_client.get(f"/user/{user.username}/")
     assert response.status_code == status.HTTP_200_OK
+    assert response.data["id"] == str(user.id)
     assert response.data["username"] == user.username
     assert response.data["email"] == user.email
     assert response.data["followers"] == 0

@@ -26,7 +26,7 @@ class PostCommentView(
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PostCommentSerializer
-    queryset = PostComment.objects.filter(deleted_at=None)
+    queryset = PostComment.objects.filter(deleted_at=None).select_related("user")
 
     def get_object(self):
         return get_object_or_404(

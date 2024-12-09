@@ -15,6 +15,7 @@ def test_followers(api_client, user):
     assert response.data["count"] == 1
     assert len(response.data["results"]) == 1
     assert response.data["results"][0]["username"] == new_user.username
+    assert response.data["results"][0]["id"] == str(new_user.id)
 
 
 @pytest.mark.django_db()
@@ -38,6 +39,7 @@ def test_following(api_client, user):
     assert response.data["count"] == 1
     assert len(response.data["results"]) == 1
     assert response.data["results"][0]["username"] == new_user.username
+    assert response.data["results"][0]["id"] == str(new_user.id)
 
 
 @pytest.mark.django_db()

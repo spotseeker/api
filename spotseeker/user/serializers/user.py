@@ -8,6 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            "id",
             "username",
             "email",
             "first_name",
@@ -23,6 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
         ]
 
         extra_kwargs = {
+            "id": {"read_only": True},
             "password": {"write_only": True},
             "created_at": {"read_only": True},
             "updated_at": {"read_only": True},
@@ -39,6 +41,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            "id",
             "username",
             "email",
             "first_name",

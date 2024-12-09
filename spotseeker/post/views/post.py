@@ -47,6 +47,7 @@ class PostViewSet(
             likes=Count("postlike", distinct=True),
             comments=Count("postcomment", distinct=True),
         )
+        .select_related("user")
         .prefetch_related(
             Prefetch(
                 "postimage_set", queryset=PostImage.objects.all(), to_attr="images"

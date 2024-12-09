@@ -34,6 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     followers = serializers.IntegerField(source="followers.count", read_only=True)
     following = serializers.IntegerField(source="following.count", read_only=True)
+    is_following = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -51,7 +52,12 @@ class UserProfileSerializer(serializers.ModelSerializer):
             "deleted_at",
             "followers",
             "following",
+            "is_following",
         ]
+
+    def get_is_following(self, obj):
+        user = self.context["request"].user
+        return user.following.filter(followed_user_id=obj.pk).exists()
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):

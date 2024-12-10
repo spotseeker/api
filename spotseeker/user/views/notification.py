@@ -10,8 +10,10 @@ class NotificationView(ListAPIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = NotificationSerializer
-    queryset = Notification.objects.filter(deleted_at=None).select_related(
-        "user_interaction"
+    queryset = (
+        Notification.objects.filter(deleted_at=None)
+        .select_related("user_interaction")
+        .order_by("-created_at")
     )
 
     def get_queryset(self, *args, **kwargs):

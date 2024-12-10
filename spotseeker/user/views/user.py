@@ -56,6 +56,8 @@ class UserViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     @action(detail=True, methods=[HTTPMethod.POST])
     def follow(self, request, username):
         instance = self.get_object()
+        if instance == request.user:
+            return Response(status=status.HTTP_403_FORBIDDEN)
         follow, created = Follow.objects.get_or_create(
             follower_user=request.user, followed_user=instance
         )

@@ -10,6 +10,7 @@ from rest_framework.mixins import ListModelMixin
 from rest_framework.mixins import RetrieveModelMixin
 from rest_framework.mixins import UpdateModelMixin
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -42,7 +43,7 @@ class UserViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     @extend_schema(
         request=UserUpdateSerializer, responses={200: UserSerializer, 403: None}
     )
-    def update(self, request, *args, **kwargs):
+    def partial_update(self, request, *args, **kwargs):
         instance = self.get_object()
         if instance != request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
@@ -52,9 +53,8 @@ class UserViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
         response = UserSerializer(user)
         return Response(response.data)
 
-    @extend_schema(request=UserPasswordUpdateSerializer)
     @action(detail=True, methods=[HTTPMethod.POST])
-    def follow(self, request, username):
+    def follow(self, request, *args, **kwargs):
         instance = self.get_object()
         if instance == request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
@@ -68,8 +68,8 @@ class UserViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     @extend_schema(
         request=UserOTPSerializer, responses={204: None, 400: ErrorSerializer}
     )
-    @action(detail=False, methods=[HTTPMethod.POST])
-    def otp(self, request):
+    @action(detail=True, methods=[HTTPMethod.POST])
+    def otp(self, request, *args, **kwargs):
         serializer = UserOTPSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         otp = serializer.validated_data["otp"]
@@ -83,22 +83,26 @@ class UserViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
         request.user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @extend_schema(request=UserPasswordUpdateSerializer)
-    @action(detail=False, methods=[HTTPMethod.PATCH])
-    def password(self, request):
-        serializer = UserPasswordUpdateSerializer(request.user, data=request.data)
+    @extend_schema(
+        request=RecoverPasswordSerializer,
+        responses={204: None},
+        methods=["POST"],
+        description="Use to reset the forgotten password",
+    )
+    @extend_schema(
+        request=UserPasswordUpdateSerializer,
+        responses={204: None},
+        methods=["PATCH"],
+        description="Use to update the password",
+    )
+    @action(detail=True, methods=[HTTPMethod.PATCH, HTTPMethod.POST])
+    def password(self, request: Request, *args, **kwargs):
+        if request.method == HTTPMethod.POST:
+            serializer = RecoverPasswordSerializer(data=request.data)
+        else:
+            serializer = UserPasswordUpdateSerializer(request.user, data=request.data)
         serializer.is_valid(raise_exception=True)
         password = make_password(serializer.validated_data["new_password"])
-        request.user.password = password
-        request.user.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-    @extend_schema(request=RecoverPasswordSerializer)
-    @action(detail=False, methods=[HTTPMethod.POST], url_path="password/reset")
-    def recover_password(self, request):
-        serializer = RecoverPasswordSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        password = make_password(serializer.validated_data["password"])
         request.user.password = password
         request.user.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

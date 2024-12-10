@@ -15,6 +15,8 @@ def test_create_comment(api_client, post):
     assert response.status_code == status.HTTP_201_CREATED
     assert response.data["comment"] == "test comment"
     assert response.data["user"]["id"] == str(new_user.id)
+    response = api_client.get(f"/post/{post.id}/")
+    assert response.data["comments"] == 1
 
 
 @pytest.mark.django_db()

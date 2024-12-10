@@ -43,7 +43,7 @@ def test_update_password(api_client):
     user = UserFactory(password="password")  # noqa: S106
     api_client.force_authenticate(user=user)
     response = api_client.patch(
-        "/user/password/",
+        f"/user/{user.username}/password/",
         {"password": "password", "new_password": "new_password"},
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -55,7 +55,7 @@ def test_update_password_wrong_password(api_client):
     user = UserFactory(password="password")  # noqa: S106
     api_client.force_authenticate(user=user)
     response = api_client.patch(
-        "/user/password/",
+        f"/user/{user.username}/password/",
         {"password": "wrong_password", "new_password": "new_password"},
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST

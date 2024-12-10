@@ -16,12 +16,18 @@ def test_create_user():
     assert reverse("user:create") == "/user/"
 
 
-def test_user_otp():
-    assert reverse("user:user-otp") == "/user/otp/"
+def test_user_otp(user: User):
+    assert (
+        reverse("user:user-otp", kwargs={"username": user.username})
+        == f"/user/{user.username}/otp/"
+    )
 
 
-def test_user_password():
-    assert reverse("user:user-password") == "/user/password/"
+def test_user_password(user: User):
+    assert (
+        reverse("user:user-password", kwargs={"username": user.username})
+        == f"/user/{user.username}/password/"
+    )
 
 
 def test_user_notification(user: User):

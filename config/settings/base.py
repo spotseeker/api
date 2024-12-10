@@ -305,3 +305,7 @@ SIMPLE_JWT = {
 # ------------------------------------------------------------------------------
 RESEND_APIKEY = env.str("RESEND_APIKEY", "")
 EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", "")
+
+# Google Maps
+# ------------------------------------------------------------------------------
+GOOGLE_MAPS_API_KEY = env.str("GOOGLE_MAPS_API_KEY", "")

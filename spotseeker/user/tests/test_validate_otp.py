@@ -9,7 +9,7 @@ def test_validate_otp(api_client):
     otp = baker.make("user.UserOTP", user=user)
     api_client.force_authenticate(user=user)
     response = api_client.post(
-        "/user/otp/",
+        f"/user/{user.username}/otp/",
         {"otp": otp.otp},
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT
@@ -21,7 +21,7 @@ def test_invalid_otp(api_client):
     baker.make("user.UserOTP", user=user, otp="234568")
     api_client.force_authenticate(user=user)
     response = api_client.post(
-        "/user/otp/",
+        f"/user/{user.username}/otp/",
         {"otp": "123456"},
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST

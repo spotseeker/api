@@ -91,8 +91,8 @@ def test_reset_password(api_client):
     user = baker.make("user.User")
     api_client.force_authenticate(user=user)
     response = api_client.post(
-        "/user/password/reset/",
-        {"password": "newpassword"},
+        f"/user/{user.username}/password/",
+        {"new_password": "newpassword"},
     )
     assert response.status_code == status.HTTP_204_NO_CONTENT
     user.refresh_from_db()

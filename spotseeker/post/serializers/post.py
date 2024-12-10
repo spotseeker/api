@@ -16,6 +16,8 @@ class PostImageSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     likes = serializers.IntegerField(read_only=True)
     comments = serializers.IntegerField(read_only=True)
+    is_liked = serializers.BooleanField(read_only=True)
+    is_bookmarked = serializers.BooleanField(read_only=True)
     images = PostImageSerializer(many=True)
     user = UserSerializer(read_only=True)
 

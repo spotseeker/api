@@ -102,15 +102,20 @@ class PostViewSet(
         serializer.save(user=request.user)
         return Response(status=status.HTTP_201_CREATED, data=serializer.data)
 
-    @extend_schema(request=PostUpdateSerializer, responses={200: PostUpdateSerializer})
+    @extend_schema(request=PostUpdateSerializer, responses={200: PostSerializer})
     def update(self, request, *args, **kwargs):
         instance = self.get_object()
         if instance.user != request.user:
             return Response(status=status.HTTP_403_FORBIDDEN)
         serializer = PostUpdateSerializer(instance, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(status=status.HTTP_200_OK, data=serializer.data)
+        instance = serializer.save()
+        response = self.get_serializer(instance)
+        return Response(status=status.HTTP_200_OK, data=response.data)
+
+    @extend_schema(request=PostUpdateSerializer, responses={200: PostSerializer})
+    def partial_update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs)
 
     @extend_schema(request=None, responses={204: None})
     def destroy(self, request, *args, **kwargs):

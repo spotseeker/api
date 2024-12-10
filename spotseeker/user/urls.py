@@ -1,5 +1,4 @@
 from django.urls import path
-from rest_framework.routers import DefaultRouter
 
 from spotseeker.user.views import NotificationView
 from spotseeker.user.views import RecoverPasswordOTPView
@@ -9,15 +8,26 @@ from spotseeker.user.views import UserViewSet
 from spotseeker.user.views.user import UserFollowersView
 from spotseeker.user.views.user import UserFollowingView
 
-router = DefaultRouter()
-
-router.register("", UserViewSet)
-
 app_name = "user"
 
 urlpatterns = [
     path("", UserCreateView.as_view(), name="create"),
-    *router.urls,
+    path(
+        "<str:username>/",
+        UserViewSet.as_view({"get": "retrieve", "patch": "partial_update"}),
+        name="user-detail",
+    ),
+    path("<str:username>/otp/", UserViewSet.as_view({"post": "otp"}), name="user-otp"),
+    path(
+        "<str:username>/follow/",
+        UserViewSet.as_view({"post": "follow"}),
+        name="user-follow",
+    ),
+    path(
+        "<str:username>/password/",
+        UserViewSet.as_view({"patch": "password", "post": "password"}),
+        name="user-password",
+    ),
     path("<str:username>/followers/", UserFollowersView.as_view(), name="followers"),
     path("<str:username>/following/", UserFollowingView.as_view(), name="followers"),
     path(

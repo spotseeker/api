@@ -67,6 +67,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            "username",
             "first_name",
             "last_name",
             "birth_date",
@@ -89,7 +90,5 @@ class UserPasswordUpdateSerializer(serializers.ModelSerializer):
         return value
 
 
-class RecoverPasswordSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ["password"]
+class RecoverPasswordSerializer(serializers.Serializer):
+    new_password = serializers.CharField()

@@ -17,6 +17,7 @@ from spotseeker.utils.email import EmailHelper
 class UserCreateView(CreateAPIView, ListAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.all()
+    pagination_class = None
 
     @transaction.atomic
     def perform_create(self, serializer):
@@ -29,10 +30,10 @@ class UserCreateView(CreateAPIView, ListAPIView):
 
     @extend_schema(
         description="Check if a username or email is used",
-        parameters=UserAvailableSearchSerializer,
+        parameters=[UserAvailableSearchSerializer],
         responses={200: UserAvailableSerializer},
     )
-    def list(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         username = request.query_params.get("username")
         email = request.query_params.get("email")
         if username is None and email is None:

@@ -1,6 +1,8 @@
 from http import HTTPMethod
 
 from django.db.models import Count
+from django.db.models import Exists
+from django.db.models import OuterRef
 from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
@@ -43,26 +45,39 @@ class PostViewSet(
     filterset_class = PostFilter
     search_fields = ["body", "user__username", "user__first_name", "user__last_name"]
     lookup_field = "id"
-    queryset = (
-        Post.objects.filter(
-            deleted_at=None,
-        )
-        .annotate(
-            likes=Count("postlike", distinct=True),
-            comments=Count("postcomment", distinct=True),
-        )
-        .select_related("user")
-        .prefetch_related(
-            Prefetch(
-                "postimage_set", queryset=PostImage.objects.all(), to_attr="images"
+    queryset = None
+
+    def get_queryset(self):
+        return (
+            Post.objects.filter(
+                deleted_at=None,
             )
+            .annotate(
+                likes=Count("postlike", distinct=True),
+                comments=Count("postcomment", distinct=True),
+                is_liked=Exists(
+                    PostLike.objects.filter(
+                        post_id=OuterRef("id"), user=self.request.user
+                    )
+                ),
+                is_bookmarked=Exists(
+                    PostBookmark.objects.filter(
+                        post_id=OuterRef("id"), user=self.request.user
+                    )
+                ),
+            )
+            .select_related("user")
+            .prefetch_related(
+                Prefetch(
+                    "postimage_set", queryset=PostImage.objects.all(), to_attr="images"
+                )
+            )
+            .order_by("-created_at")
         )
-        .order_by("-created_at")
-    )
 
     def get_object(self):
         return get_object_or_404(
-            Post.objects.filter(deleted_at=None),
+            self.get_queryset(),
             id=self.kwargs["id"],
         )
 

@@ -75,3 +75,10 @@ def test_follow_user_invalid(api_client, user):
     api_client.force_authenticate(user=user)
     response = api_client.post("/user/invalid/follow/")
     assert response.status_code == status.HTTP_404_NOT_FOUND
+
+
+@pytest.mark.django_db()
+def test_follow_own_user(api_client, user):
+    api_client.force_authenticate(user=user)
+    response = api_client.post(f"/user/{user.username}/follow/")
+    assert response.status_code == status.HTTP_403_FORBIDDEN

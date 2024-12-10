@@ -68,7 +68,7 @@ class PostViewSet(
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        filters = ["user", "is_archived", "is_bookmarked", "q"]
+        filters = [*list(PostFilter.get_filters().keys()), "q"]
         if not any(key in request.query_params for key in filters):
             following = request.user.following.values_list(
                 "followed_user_id", flat=True

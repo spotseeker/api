@@ -21,8 +21,8 @@ urlpatterns = [
     path("<str:username>/followers/", UserFollowersView.as_view(), name="followers"),
     path("<str:username>/following/", UserFollowingView.as_view(), name="followers"),
     path(
-        "notification/",
-        NotificationView.as_view({"get": "list"}),
+        "<str:username>/notification/",
+        NotificationView.as_view(),
         name="notification-list",
     ),
     path("password/recover/", RecoverPasswordView.as_view(), name="recover-password"),

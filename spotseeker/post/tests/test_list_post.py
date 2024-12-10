@@ -175,3 +175,16 @@ def test_list_posts_by_names(api_client, post):
     assert response.status_code == status.HTTP_200_OK
     assert response.data["count"] == 1
     assert len(response.data["results"]) == 1
+
+
+@pytest.mark.django_db()
+def test_list_posts_discover(api_client, user):
+    new_user = UserFactory()
+    post = PostFactory(user=new_user)
+    PostImageFactory(post=post)
+    api_client.force_authenticate(user=user)
+    response = api_client.get("/post/?is_discover=true")
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["count"] == 1
+    assert len(response.data["results"]) == 1
+    assert response.data["results"][0]["body"] == post.body

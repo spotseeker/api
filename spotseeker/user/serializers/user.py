@@ -92,3 +92,13 @@ class UserPasswordUpdateSerializer(serializers.ModelSerializer):
 
 class RecoverPasswordSerializer(serializers.Serializer):
     new_password = serializers.CharField()
+
+
+class UserAvailableSearchSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    email = serializers.CharField()
+
+
+class UserAvailableSerializer(serializers.Serializer):
+    username = serializers.BooleanField()
+    email = serializers.BooleanField()

@@ -24,5 +24,8 @@ def test_user_password():
     assert reverse("user:user-password") == "/user/password/"
 
 
-def test_user_notification():
-    assert reverse("user:notification-list") == "/user/notification/"
+def test_user_notification(user: User):
+    assert (
+        reverse("user:notification-list", kwargs={"username": user.username})
+        == f"/user/{user.username}/notification/"
+    )

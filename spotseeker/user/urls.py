@@ -4,9 +4,9 @@ from spotseeker.user.views import NotificationView
 from spotseeker.user.views import RecoverPasswordOTPView
 from spotseeker.user.views import RecoverPasswordView
 from spotseeker.user.views import UserCreateView
+from spotseeker.user.views import UserFollowersView
+from spotseeker.user.views import UserFollowingView
 from spotseeker.user.views import UserViewSet
-from spotseeker.user.views.user import UserFollowersView
-from spotseeker.user.views.user import UserFollowingView
 
 app_name = "user"
 

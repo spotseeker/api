@@ -11,6 +11,7 @@ class PostFilter(filters.FilterSet):
     is_bookmarked = filters.BooleanFilter(
         field_name="postbookmark__user", method="filter_is_bookmarked"
     )
+    is_discover = filters.BooleanFilter(method="filter_is_discover")
 
     class Meta:
         model = Post
@@ -27,4 +28,10 @@ class PostFilter(filters.FilterSet):
     def filter_is_bookmarked(self, queryset, name, value):
         if value:
             return queryset.filter(postbookmark__user=self.request.user)
-        return queryset
+        return queryset.filter(is_archived=False)
+
+    def filter_is_discover(self, queryset, name, value):
+        following = self.request.user.following.values_list(
+            "followed_user_id", flat=True
+        )
+        return queryset.exclude(user_id__in=following).filter(is_archived=False)

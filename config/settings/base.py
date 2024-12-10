@@ -96,6 +96,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "spotseeker.user",
     "spotseeker.post",
+    "spotseeker.location",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -289,7 +290,7 @@ REST_FRAMEWORK = {
 SPECTACULAR_SETTINGS = {
     "TITLE": "SpotSeeker API",
     "DESCRIPTION": "Mobile application designed for travelers to share their experiences through images",
-    "VERSION": "0.1.9",
+    "VERSION": "0.1.10",
     "SERVE_INCLUDE_SCHEMA": False,
     # OTHER SETTINGS
 }
@@ -304,3 +305,7 @@ SIMPLE_JWT = {
 # ------------------------------------------------------------------------------
 RESEND_APIKEY = env.str("RESEND_APIKEY", "")
 EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", "")
+
+# Google Maps
+# ------------------------------------------------------------------------------
+GOOGLE_MAPS_API_KEY = env.str("GOOGLE_MAPS_API_KEY", "")

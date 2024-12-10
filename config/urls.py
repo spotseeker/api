@@ -19,6 +19,7 @@ urlpatterns = [
     path("docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
     path("user/", include("spotseeker.user.urls", namespace="user")),
     path("post/", include("spotseeker.post.urls", namespace="post")),
+    path("location/", include("spotseeker.location.urls", namespace="location")),
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
 

@@ -4,3 +4,4 @@ class ErrorMessages:
     MAX_IMAGES = "You can only upload up to 3 images."
     UNIQUE_IMAGES_ORDER = "Order of images must be unique."
     INVALID_PASSWORD = "Invalid password."  # noqa: S105
+    INVALID_LOCATION = "The ID of the location is invalid."

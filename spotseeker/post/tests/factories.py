@@ -2,6 +2,7 @@ from factory import Faker
 from factory import SubFactory
 from factory.django import DjangoModelFactory
 
+from spotseeker.location.tests.factories import LocationFactory
 from spotseeker.post.models import Post
 from spotseeker.post.models import PostBookmark
 from spotseeker.post.models import PostComment
@@ -11,7 +12,7 @@ from spotseeker.user.tests.factories import UserFactory
 
 class PostFactory(DjangoModelFactory):
     body = Faker("text")
-    location_id = Faker("uuid4")
+    location = SubFactory(LocationFactory)
     score = Faker("random_int", min=1, max=5)
 
     class Meta:

@@ -34,7 +34,7 @@ class UserViewSet(RetrieveModelMixin, UpdateModelMixin, GenericViewSet):
     queryset = User.objects.all()
     lookup_field = "username"
 
-    @extend_schema(responses={200: UserSerializer})
+    @extend_schema(responses={200: UserProfileSerializer})
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = UserProfileSerializer(instance, context={"request": request})

@@ -1,7 +1,10 @@
+import googlemaps
 from django.conf import settings
 from rest_framework import serializers
 
 from config.errors import ErrorMessages
+from spotseeker.location.models import Location
+from spotseeker.location.serializers import LocationDetailSerializer
 from spotseeker.post.models import Post
 from spotseeker.post.models import PostImage
 from spotseeker.user.serializers.user import UserSerializer
@@ -20,11 +23,16 @@ class PostSerializer(serializers.ModelSerializer):
     is_bookmarked = serializers.BooleanField(read_only=True)
     images = PostImageSerializer(many=True)
     user = UserSerializer(read_only=True)
+    location = LocationDetailSerializer(read_only=True)
+    location_code = serializers.CharField(write_only=True)
 
     class Meta:
         model = Post
         fields = "__all__"
         read_only_fields = ["user", "deleted_at", "created_at", "updated_at"]
+        extra_kwargs = {
+            "location_code": {"write_only": True},
+        }
 
     def validate_images(self, images):
         count = len(images)
@@ -38,7 +46,21 @@ class PostSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         images = validated_data.pop("images")
-        post = Post.objects.create(**validated_data)
+        location_code = validated_data.pop("location_code")
+        location = Location.objects.filter(code=location_code).first()
+        if not location:
+            gmaps = googlemaps.Client(key=settings.GOOGLE_MAPS_API_KEY)
+            try:
+                results = gmaps.place(location_code, language="es-419")
+            except googlemaps.exceptions.ApiError as e:
+                raise serializers.ValidationError(ErrorMessages.INVALID_LOCATION) from e
+            lat = results["result"]["geometry"]["location"]["lat"]
+            lng = results["result"]["geometry"]["location"]["lng"]
+            name = results["result"]["name"]
+            location = Location.objects.create(
+                code=location_code, name=name, latitude=lat, longitude=lng
+            )
+        post = Post.objects.create(location=location, **validated_data)
         created_images = [
             PostImage.objects.create(
                 post=post, media=image["media"], order=image["order"]

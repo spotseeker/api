@@ -3,13 +3,17 @@ from django.utils.translation import gettext_lazy as _
 
 from config.models import BaseModel
 from config.models import BaseTimestampedModel
+from spotseeker.location.models import Location
 from spotseeker.user.models import User
+from spotseeker.utils.location import populate_location
 
 
 class Post(BaseModel, BaseTimestampedModel):
     body = models.TextField(_("description of the post"))
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    location_id = models.TextField(_("google maps location id"))
+    location = models.ForeignKey(
+        Location, on_delete=models.CASCADE, default=populate_location
+    )
     score = models.IntegerField(_("score of the location"), null=True, blank=True)
     is_archived = models.BooleanField(_("if the post is not public"), default=False)
 

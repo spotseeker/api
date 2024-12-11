@@ -1,6 +1,7 @@
 import pytest
 from rest_framework import status
 
+from spotseeker.location.tests.factories import LocationFactory
 from spotseeker.post.tests.factories import PostFactory
 from spotseeker.post.tests.factories import PostImageFactory
 
@@ -8,16 +9,18 @@ from spotseeker.post.tests.factories import PostImageFactory
 @pytest.mark.django_db()
 def test_create_post(api_client, user):
     api_client.force_authenticate(user=user)
+    location = LocationFactory()
     post = PostFactory.build()
     image = PostImageFactory.build(post=post, order=1)
+    request = {
+        "body": post.body,
+        "score": post.score,
+        "location_code": location.code,
+        "images": [{"media": image.media, "order": 1}],
+    }
     response = api_client.post(
         "/post/",
-        {
-            "body": post.body,
-            "score": post.score,
-            "location_id": post.location_id,
-            "images": [{"media": image.media, "order": 1}],
-        },
+        request,
         format="json",
     )
     assert response.status_code == status.HTTP_201_CREATED
@@ -27,7 +30,7 @@ def test_create_post(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_create_post_multiple_images(api_client, user):
+def test_create_post_multiple_images(api_client, user, location):
     api_client.force_authenticate(user=user)
     post = PostFactory.build()
     images = PostImageFactory.build_batch(3, post=post)
@@ -36,7 +39,7 @@ def test_create_post_multiple_images(api_client, user):
         {
             "body": post.body,
             "score": post.score,
-            "location_id": post.location_id,
+            "location_code": location.code,
             "images": [
                 {"media": image.media, "order": i + 1} for i, image in enumerate(images)
             ],
@@ -51,7 +54,7 @@ def test_create_post_multiple_images(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_fail_exceeded_number_of_images(api_client, user):
+def test_fail_exceeded_number_of_images(api_client, user, location):
     api_client.force_authenticate(user=user)
     post = PostFactory.build()
     images = PostImageFactory.build_batch(4, post=post)
@@ -60,7 +63,7 @@ def test_fail_exceeded_number_of_images(api_client, user):
         {
             "body": post.body,
             "score": post.score,
-            "location_id": post.location_id,
+            "location_code": location.code,
             "images": [
                 {"media": image.media, "order": image.order} for image in images
             ],
@@ -86,11 +89,11 @@ def test_fail_empty_location(api_client, user):
         format="json",
     )
     assert response.status_code == status.HTTP_400_BAD_REQUEST
-    assert response.data["location_id"][0] == "This field is required."
+    assert response.data["location_code"][0] == "This field is required."
 
 
 @pytest.mark.django_db()
-def test_fail_empty_images(api_client, user):
+def test_fail_empty_images(api_client, user, location):
     api_client.force_authenticate(user=user)
     post = PostFactory.build()
     response = api_client.post(
@@ -98,7 +101,7 @@ def test_fail_empty_images(api_client, user):
         {
             "body": post.body,
             "score": post.score,
-            "location_id": post.location_id,
+            "location_code": location.code,
             "images": [],
         },
         format="json",
@@ -108,7 +111,7 @@ def test_fail_empty_images(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_fail_images_order_repeated(api_client, user):
+def test_fail_images_order_repeated(api_client, user, location):
     api_client.force_authenticate(user=user)
     post = PostFactory.build()
     images = PostImageFactory.build_batch(2, post=post)
@@ -117,7 +120,7 @@ def test_fail_images_order_repeated(api_client, user):
         {
             "body": post.body,
             "score": post.score,
-            "location_id": post.location_id,
+            "location_code": location.code,
             "images": [{"media": image.media, "order": 1} for image in images],
         },
         format="json",

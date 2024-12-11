@@ -10,9 +10,9 @@ from spotseeker.user.tests.factories import UserFactory
 
 
 @pytest.mark.django_db()
-def test_list_posts(api_client, user):
+def test_list_posts(api_client, user, location):
     new_user = UserFactory()
-    post = PostFactory(user=user)
+    post = PostFactory(user=user, location=location)
     post_images = [PostImageFactory(post=post, order=i + 1) for i in range(3)]
     api_client.force_authenticate(user=new_user)
     FollowFactory(followed_user=user, follower_user=new_user)
@@ -35,10 +35,10 @@ def test_list_zero_posts(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_list_paginated(api_client, user):
+def test_list_paginated(api_client, user, location):
     new_user = UserFactory()
     FollowFactory(followed_user=user, follower_user=new_user)
-    posts = PostFactory.create_batch(21, user=user)
+    posts = PostFactory.create_batch(21, user=user, location=location)
     [PostImageFactory(post=post) for post in posts]
     api_client.force_authenticate(user=new_user)
     response = api_client.get("/post/")
@@ -55,9 +55,9 @@ def test_list_paginated(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_list_posts_not_following(api_client, user):
+def test_list_posts_not_following(api_client, user, location):
     new_user = UserFactory()
-    PostFactory(user=user)
+    PostFactory(user=user, location=location)
     api_client.force_authenticate(user=new_user)
     response = api_client.get("/post/")
     assert response.status_code == status.HTTP_200_OK
@@ -66,9 +66,9 @@ def test_list_posts_not_following(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_list_posts_archived(api_client, user):
-    post = PostFactory(user=user, is_archived=True)
-    other_post = PostFactory(user=user)
+def test_list_posts_archived(api_client, user, location):
+    post = PostFactory(user=user, is_archived=True, location=location)
+    other_post = PostFactory(user=user, location=location)
     PostImageFactory(post=post)
     PostImageFactory(post=other_post)
     api_client.force_authenticate(user=user)
@@ -81,9 +81,9 @@ def test_list_posts_archived(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_list_posts_other_user_archived(api_client, user):
+def test_list_posts_other_user_archived(api_client, user, location):
     new_user = UserFactory()
-    post = PostFactory(user=user, is_archived=True)
+    post = PostFactory(user=user, is_archived=True, location=location)
     PostImageFactory(post=post)
     FollowFactory(followed_user=user, follower_user=new_user)
     api_client.force_authenticate(user=new_user)
@@ -94,9 +94,9 @@ def test_list_posts_other_user_archived(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_list_posts_bookmarked(api_client, user):
-    post = PostFactory(user=user)
-    other_post = PostFactory(user=user)
+def test_list_posts_bookmarked(api_client, user, location):
+    post = PostFactory(user=user, location=location)
+    other_post = PostFactory(user=user, location=location)
     PostImageFactory(post=post)
     PostImageFactory(post=other_post)
     PostBookmarkFactory(user=user, post=post)
@@ -109,9 +109,9 @@ def test_list_posts_bookmarked(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_list_posts_other_user_bookmarked(api_client, user):
+def test_list_posts_other_user_bookmarked(api_client, user, location):
     new_user = UserFactory()
-    post = PostFactory(user=new_user)
+    post = PostFactory(user=new_user, location=location)
     PostImageFactory(post=post)
     FollowFactory(followed_user=new_user, follower_user=user)
     PostBookmarkFactory(user=user, post=post)
@@ -123,10 +123,10 @@ def test_list_posts_other_user_bookmarked(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_list_posts_other_user(api_client, user):
+def test_list_posts_other_user(api_client, user, location):
     new_user = UserFactory()
-    post = PostFactory(user=new_user)
-    other_post = PostFactory(user=new_user, is_archived=True)
+    post = PostFactory(user=new_user, location=location)
+    other_post = PostFactory(user=new_user, is_archived=True, location=location)
     PostImageFactory(post=post)
     PostImageFactory(post=other_post)
     api_client.force_authenticate(user=user)
@@ -138,9 +138,9 @@ def test_list_posts_other_user(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_list_posts_search(api_client, user):
+def test_list_posts_search(api_client, user, location):
     api_client.force_authenticate(user=user)
-    post = PostFactory(user=user)
+    post = PostFactory(user=user, location=location)
     first_word = post.body.split()[0]
     response = api_client.get("/post/", {"q": first_word})
     assert response.status_code == status.HTTP_200_OK
@@ -150,9 +150,9 @@ def test_list_posts_search(api_client, user):
 
 
 @pytest.mark.django_db()
-def test_list_posts_search_no_results(api_client, user):
+def test_list_posts_search_no_results(api_client, user, location):
     api_client.force_authenticate(user=user)
-    PostFactory(user=user, body="this is a test post")
+    PostFactory(user=user, body="this is a test post", location=location)
     response = api_client.get("/post/", {"q": "thisisnotinthepost"})
     assert response.status_code == status.HTTP_200_OK
     assert response.data["count"] == 0
@@ -178,9 +178,9 @@ def test_list_posts_by_names(api_client, post):
 
 
 @pytest.mark.django_db()
-def test_list_posts_discover(api_client, user):
+def test_list_posts_discover(api_client, user, location):
     new_user = UserFactory()
-    post = PostFactory(user=new_user)
+    post = PostFactory(user=new_user, location=location)
     PostImageFactory(post=post)
     api_client.force_authenticate(user=user)
     response = api_client.get("/post/?is_discover=true")

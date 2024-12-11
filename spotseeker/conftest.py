@@ -1,6 +1,8 @@
 import pytest
 from rest_framework.test import APIClient
 
+from spotseeker.location.models import Location
+from spotseeker.location.tests.factories import LocationFactory
 from spotseeker.post.models import Post
 from spotseeker.post.tests.factories import PostFactory
 from spotseeker.user.models import User
@@ -22,5 +24,10 @@ def user(db) -> User:
 
 
 @pytest.fixture()
-def post(db, user) -> Post:
-    return PostFactory(user=user)
+def location(db) -> Location:
+    return LocationFactory()
+
+
+@pytest.fixture()
+def post(db, user, location) -> Post:
+    return PostFactory(user=user, location=location)

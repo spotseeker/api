@@ -135,10 +135,10 @@ class UserFollowersView(GenericAPIView, ListModelMixin):
 class UserFollowingView(GenericAPIView, ListModelMixin):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
-    serializer_class = UserSerializer
+    serializer_class = UserProfileSerializer
     queryset = User.objects.all()
 
-    @extend_schema(responses={200: UserSerializer})
+    @extend_schema(responses={200: UserProfileSerializer})
     def get(self, request, username):
         user = get_object_or_404(
             User.objects.filter(deleted_at=None), username=username
